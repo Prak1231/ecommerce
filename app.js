@@ -14,17 +14,17 @@ const passport = require('passport')
 
 const passportConfig = require('./config/passportConfig')
 require('./mongoModels')
-const mysqlModels = require('./mysqlModels')
+
 const userRoutes = require('./routes/user')
-const loggerUtil = require('./utilities/logger')
-const responseUtil = require('./utilities/response')
+const loggerUtil = require('./helper/logger')
+const responseUtil = require('./helper/response')
 
 const app = express()
 const server = http.createServer(app)
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'pug')
+// app.set('views', path.join(__dirname, 'views'))
+// app.set('view engine', 'pug')
 
 app.use(
   express.urlencoded({
@@ -54,23 +54,17 @@ app.use((req, res, next) => {
   responseUtil.notFoundErrorResponse(res, req)
 })
 
-mysqlModels.sequelize.sync().then(function () {
-  loggerUtil.log({
-    message: 'Mysql DB connected',
-    level: 'info',
-  })
-  const port = process.env.PORT || 3000
-  server.listen(port, (error) => {
-    if (error) {
-      loggerUtil.error({
-        message: `Server error - ${error.toString()}`,
-        level: 'error',
-      })
-    } else {
-      loggerUtil.log({
-        message: `Server listening at port ${port}`,
-        level: 'info',
-      })
-    }
-  })
+const port = process.env.PORT || 3000
+server.listen(port, (error) => {
+  if (error) {
+    loggerUtil.error({
+      message: `Server error - ${error.toString()}`,
+      level: 'error',
+    })
+  } else {
+    loggerUtil.log({
+      message: `Server listening at port ${port}`,
+      level: 'info',
+    })
+  }
 })

@@ -3,7 +3,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
-const loggerUtil = require('../utilities/logger');
+const loggerUtil = require('../helper/logger');
 
 exports.serializeUser = () => {
   passport.serializeUser((user, done) => {

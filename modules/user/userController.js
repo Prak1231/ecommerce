@@ -1,22 +1,8 @@
 'use strict'
 
-const messageUtil = require('../../utilities/message')
-const responseUtil = require('../../utilities/response')
-
+const messageUtil = require('../../helper/message')
+const responseUtil = require('../../helper/response')
 const userService = require('./userService')
-
-exports.createUser = async (req, res, next) => {
-  try {
-    // const mysqlUserData = await userService.getUsersFromMysql();
-    const mongoUserData = await userService.createUser(req.body)
-
-    responseUtil.successResponse(res, messageUtil.usersFetched, {
-      mongoUserData,
-    })
-  } catch (ex) {
-    responseUtil.serverErrorResponse(res, ex)
-  }
-}
 
 exports.getUser = async (req, res, next) => {
   try {

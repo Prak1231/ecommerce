@@ -1,18 +1,20 @@
 'use strict'
 
-const mysqlModels = require('../../mysqlModels')
 const User = require('../../mongoModels/user')
 
-exports.getUsersFromMysql = () => {
-  return mysqlModels.user.findAll()
+exports.isEmailExist = async (email) => {
+  return await User.findOne({ email: email })
 }
 
+exports.registerUser = (data) => {
+  return User.create(data)
+}
+
+exports.findUser = async (email) => {
+  return await User.findOne({ email: email })
+}
 exports.getUsersFromMongo = () => {
   return User.find()
-}
-
-exports.createUser = (data) => {
-  return User.create(data)
 }
 
 exports.getUser = (id) => {
