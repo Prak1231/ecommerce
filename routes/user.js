@@ -1,9 +1,11 @@
 'use strict'
 
 const express = require('express')
+// const { verifyToken } = require('../helper/authentication')
 const router = express.Router()
 
 const { UserRegistration, userLogin } = require('../modules/user/userAuth')
+const { isAuth } = require('../modules/auth/auth')
 
 const {
   getUsers,
@@ -16,10 +18,10 @@ const {
 router.post('/create', UserRegistration)
 router.post('/login', userLogin)
 
-router.get('getUser/:id', getUser)
+router.get('/getUser/:id', getUser)
 router.put('/updateUser/:id', updateUser)
 router.delete('/deleteUser/:id', deleteUser)
 
-router.get('/getAlluser', getUsers)
+router.get('/getAlluser', isAuth, getUsers)
 
 module.exports = router

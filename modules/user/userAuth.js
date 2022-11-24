@@ -69,9 +69,10 @@ exports.userLogin = async (req, res, next) => {
 
     if (passwordMatched) {
       const payload = {
-        userId: user._id.toJSON(),
+        userId: user._id,
       }
 
+      console.log(payload)
       const accessToken = await generateAccessToken(payload)
       const refreshToken = await generateRefreshToken(payload)
 

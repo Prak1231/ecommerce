@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken')
 
 /**
  * @param {*} payload
@@ -8,12 +8,12 @@ const jwt = require('jsonwebtoken');
  */
 async function generateAccessToken(payload) {
   const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-    expiresIn: `${process.env.JWT_ACCESS_TOKEN_EXPIRY}s`
-  });
+    expiresIn: `${process.env.JWT_ACCESS_TOKEN_EXPIRY}s`,
+  })
   return {
     accessToken: token,
-    expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRY
-  };
+    expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRY,
+  }
 }
 
 /**
@@ -22,12 +22,12 @@ async function generateAccessToken(payload) {
  */
 async function generateRefreshToken(payload) {
   const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-    expiresIn: `${process.env.JWT_REFRESH_TOKEN_EXPIRY}s`
-  });
+    expiresIn: `${process.env.JWT_REFRESH_TOKEN_EXPIRY}d`,
+  })
   return {
     refreshToken: token,
-    refreshExpiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRY
-  };
+    refreshExpiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRY,
+  }
 }
 
 /**
@@ -36,11 +36,11 @@ async function generateRefreshToken(payload) {
  * @description To verify access or refresh token
  */
 async function verifyAuthToken(jwtString, secretOrPublicKey) {
-  return jwt.verify(jwtString, secretOrPublicKey);
+  return jwt.verify(jwtString, secretOrPublicKey)
 }
 
 module.exports = {
   generateAccessToken,
   generateRefreshToken,
-  verifyAuthToken
-};
+  verifyAuthToken,
+}
