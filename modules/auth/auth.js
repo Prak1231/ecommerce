@@ -2,15 +2,17 @@ const jwt = require('jsonwebtoken')
 const User = require('../../mongoModels/user')
 const responseUtil = require('../../helper/response')
 const messageUtil = require('../../helper/message')
+const { generateAccessToken } = require('../../helper/authentication')
 
-exports.isAuth = async (req, res, next) => {
+exports.verifyAuthToken = async (req, res, next) => {
   if (req.headers && req.headers.authorization) {
     const token = req.headers.authorization.split(' ')[1]
 
     try {
       const decode = jwt.verify(token, process.env.JWT_SECRET_KEY)
+
       const user = await User.findById(decode.userId)
-      console.log(user)
+
       if (!user) {
         return responseUtil.authorizationErrorResponse(
           res,
@@ -20,6 +22,59 @@ exports.isAuth = async (req, res, next) => {
 
       req.user = user
       next()
+    } catch (error) {
+      if (error.name === 'JsonWebTokenError') {
+        return responseUtil.authorizationErrorResponse(
+          res,
+          messageUtil.server.unAuthorized,
+        )
+      }
+      if (error.name === 'TokenExpiredError') {
+        return res.json({
+          success: false,
+          message: 'session expired try sign in!',
+        })
+      }
+
+      return responseUtil.authorizationErrorResponse(
+        res,
+        messageUtil.server.serverError,
+      )
+    }
+  } else {
+    return responseUtil.authorizationErrorResponse(
+      res,
+      messageUtil.server.unAuthorized,
+    )
+  }
+}
+
+exports.generateAccessToken = async (req, res, next) => {
+  if (req.body && req.body.token) {
+    const token = req.body.token
+
+    try {
+      const decode = jwt.verify(token, process.env.JWT_SECRET_KEY)
+
+      const user = await User.findById(decode.userId)
+
+      if (!user) {
+        return responseUtil.authorizationErrorResponse(
+          res,
+          messageUtil.server.unAuthorized,
+        )
+      }
+
+      const payload = {
+        userId: user._id,
+      }
+      const accessToken = await generateAccessToken(payload)
+
+      const authResponse = {}
+      authResponse.accessToken = accessToken.accessToken
+      authResponse.expiresIn = Number(accessToken.expiresIn)
+
+      responseUtil.successResponse(res, authResponse)
     } catch (error) {
       if (error.name === 'JsonWebTokenError') {
         return responseUtil.authorizationErrorResponse(

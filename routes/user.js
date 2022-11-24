@@ -5,7 +5,7 @@ const express = require('express')
 const router = express.Router()
 
 const { UserRegistration, userLogin } = require('../modules/user/userAuth')
-const { isAuth } = require('../modules/auth/auth')
+const { verifyAuthToken, generateAccessToken } = require('../modules/auth/auth')
 
 const {
   getUsers,
@@ -22,6 +22,8 @@ router.get('/getUser/:id', getUser)
 router.put('/updateUser/:id', updateUser)
 router.delete('/deleteUser/:id', deleteUser)
 
-router.get('/getAlluser', isAuth, getUsers)
+router.get('/getAlluser', verifyAuthToken, getUsers)
+
+router.post('/generateAccessToken', generateAccessToken)
 
 module.exports = router
