@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken')
 const User = require('../../mongoModels/user')
+const responseUtil = require('../../helper/response')
+const messageUtil = require('../../helper/message')
 
 exports.isAuth = async (req, res, next) => {
   if (req.headers && req.headers.authorization) {
@@ -10,14 +12,20 @@ exports.isAuth = async (req, res, next) => {
       const user = await User.findById(decode.userId)
       console.log(user)
       if (!user) {
-        return res.json({ success: false, message: 'unauthorized access!' })
+        return responseUtil.authorizationErrorResponse(
+          res,
+          messageUtil.server.unAuthorized,
+        )
       }
 
       req.user = user
       next()
     } catch (error) {
       if (error.name === 'JsonWebTokenError') {
-        return res.json({ success: false, message: 'unauthorized access!' })
+        return responseUtil.authorizationErrorResponse(
+          res,
+          messageUtil.server.unAuthorized,
+        )
       }
       if (error.name === 'TokenExpiredError') {
         return res.json({
@@ -26,9 +34,15 @@ exports.isAuth = async (req, res, next) => {
         })
       }
 
-      res.res.json({ success: false, message: 'Internal server error!' })
+      return responseUtil.authorizationErrorResponse(
+        res,
+        messageUtil.server.serverError,
+      )
     }
   } else {
-    res.json({ success: false, message: 'unauthorized access!' })
+    return responseUtil.authorizationErrorResponse(
+      res,
+      messageUtil.server.unAuthorized,
+    )
   }
 }

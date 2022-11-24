@@ -5,6 +5,7 @@ module.exports = {
     serverError: 'Internal Server Error',
     validationErrors: 'Validation Errors',
     notFoundError: 'Method or URL Not Found',
+    unAuthorized: 'unathorized user',
   },
   registration: {
     emailIdAlreayExists: 'Email is already in use',
