@@ -3,8 +3,7 @@ const User = require('../../mongoModels/user')
 const responseUtil = require('../../helper/response')
 const messageUtil = require('../../helper/message')
 const { generateAccessToken } = require('../../helper/authentication')
-
-exports.verifyAuthToken = async (req, res, next) => {
+const verifyAuthToken = async (req, res, next) => {
   if (req.headers && req.headers.authorization) {
     const token = req.headers.authorization.split(' ')[1]
 
@@ -49,7 +48,7 @@ exports.verifyAuthToken = async (req, res, next) => {
   }
 }
 
-exports.generateAccessToken = async (req, res, next) => {
+const generateAccessTokens = async (req, res, next) => {
   if (req.body && req.body.token) {
     const token = req.body.token
 
@@ -100,4 +99,20 @@ exports.generateAccessToken = async (req, res, next) => {
       messageUtil.server.unAuthorized,
     )
   }
+}
+
+const isAdminAuth = (req, res, next) => {
+  verifyAuthToken(req, res, () => {
+    if (req.user.role === 1) {
+      res.send('you are admin you can change')
+    } else {
+      res.send('your are not admin')
+    }
+  })
+}
+
+module.exports = {
+  verifyAuthToken,
+  generateAccessTokens,
+  isAdminAuth,
 }
