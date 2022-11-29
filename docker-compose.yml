@@ -1,0 +1,44 @@
+version: '3'
+services:
+  backend:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: ecommerce_backend
+    container_name: ecommerce_backend
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - mongo
+      - redis
+    env_file:
+      - .env  
+    networks:
+      - ecommerce_backend
+  mongo:
+    image: "mongo:4"
+    restart: always
+    container_name: ecommerce_backend_mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - ./mongo/dataDir:/data/db
+    env_file:
+      - .env
+    networks:
+      - ecommerce_backend
+  redis:
+    image: "redis:alpine"
+    container_name: ecommerce_backend_redis
+    #command: redis-server --requirepass sOmE_sEcUrE_pAsS
+    volumes:
+     - ./redis-data:/var/lib/redis
+     - ./redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - ecommerce_backend
+      
+networks:
+  nodejs_pa_backend:
+     external:
+       name: ecommerce_backend
